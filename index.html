@@ -17,15 +17,21 @@
 <link type="text/css" rel="stylesheet" href="stylesheets/jquery.qtip.css" />
 <style type="text/css">
 	html, body {
-    background-color:#ffffff;
-    margin:0 0 0 0;
-    height:100%;
+		background-color:#ffffff;
+		margin:0 0 0 0;
+		height:100%;
+	}
+	input{
+		border:none;
+		padding:0px;
 	}
 	input.base{
 		width:50px;
 		height:50px;
-		padding:0px;
-		border:none;
+		text-align: center;
+	}
+	input.bltable{
+		width:30px;
 		text-align: center;
 	}
 	input.tooltip{
@@ -36,35 +42,38 @@
 		text-align: center;
 		font-weight: bold;
 	}
-div.sidebar{
-	width: 80px;
-	height: 100vh;
-	background: #F00;
-  float:left;
-	text-align:center;
-}
-div.attribute{
-	width: 50px;
-	height: 50px;
-	display: table-cell;
-	vertical-align: middle;
-	text-align:center;
-}
-div.calculation{
-	/*width: 300px;*/
-	/*height: 50px;*/
-	/*background: #F00;*/
-	/*display: table-cell;*/
-	vertical-align: middle;
-	text-align:center;
-}
-div.attributeEx{
-	width: 50px;
-	height: 50px;
-	display: table-cell;
-	vertical-align: middle;
-	text-align:center;
-}
+	div.sidebar{
+		width: 80px;
+		height: 300vh;
+		background: #F00;
+	  float:left;
+		text-align:center;
+	}
+	div.attribute{
+		width: 50px;
+		height: 50px;
+		display: table-cell;
+		vertical-align: middle;
+		text-align:center;
+	}
+	div.calculation{
+		/*width: 300px;*/
+		/*height: 50px;*/
+		/*background: #F00;*/
+		/*display: table-cell;*/
+		vertical-align: middle;
+		text-align:center;
+	}
+	div.attributeEx{
+		width: 50px;
+		height: 50px;
+		display: table-cell;
+		vertical-align: middle;
+		text-align:center;
+	}
+	table, th, td {
+    border: 0px solid black;
+	}
 </style>
 </head>
 <body>
@@ -74,83 +83,93 @@ div.attributeEx{
 		Hello
 		</div>
 		<div style="display:inline-block">
-		<div>
-		<div class="attribute"><a>ST</a></div>
-		<div class="attribute"><input class="base" type="text" name="stValue" value="10"></div>
-		<div class="attribute"><input class="base" type="text" name="stCost" value="0" readonly></div>
+			<div>
+			<div class="attribute"><a>ST</a></div>
+			<div class="attribute"><input class="base" type="text" name="stValue" value="10"></div>
+			<div class="attribute"><input class="base" type="text" name="stCost" value="0" readonly></div>
 			<div style="display: table-cell;" expanding="True">
-				<div class="attribute"><a>HP</a></div>
-				<div class="attribute"><input class="base" type="text" name="hpValue" value="10" readonly></div>
-				<div class="attribute"><input class="base" type="text" name="hpCost" value="0" readonly></div>
+			<div class="attribute"><a>HP</a></div>
+			<div class="attribute"><input class="base" type="text" name="hpValue" value="10" readonly></div>
+			<div class="attribute"><input class="base" type="text" name="hpCost" value="0" readonly></div>
 			</div>
 			<div class="calculation" id="hpExpand" state="hidden">HP=ST+<input class="tooltip" type="text" name="hpOffValue" value="0"></div>
+			</div>
+			<div>
+			<div class="attribute"><a>DX</a></div>
+			<div class="attribute"><input class="base" type="text" name="dxValue" value="10"></div>
+			<div class="attribute"><input class="base" type="text" name="dxCost" value="0"></div>
+			<div style="display: table-cell;" expanding="True">
+			<div class="attribute"><a>Per</a></div>
+			<div class="attribute"><input class="base" type="text" name="perValue" value="10"></div>
+			<div class="attribute"><input class="base" type="text" name="perCost" value="0"></div>
+			</div>
+			<div class="calculation" id="perExpand" state="hidden">Per=IQ+<input class="tooltip" type="text" name="perOffValue" value="0"></div>
+			</div>
+			<div>
+			<div class="attribute"><a>IQ</a></div>
+			<div class="attribute"><input class="base" type="text" name="iqValue" value="10"></div>
+			<div class="attribute"><input class="base" type="text" name="iqCost" value="0"></div>
+			<div style="display: table-cell;" expanding="True">
+			<div class="attribute"><a>Will</a></div>
+			<div class="attribute"><input class="base" type="text" name="willValue" value="10"></div>
+			<div class="attribute"><input class="base" type="text" name="willCost" value="0"></div>
+			</div>
+			<div class="calculation" id="willExpand" state="hidden">Will=IQ+<input class="tooltip" type="text" name="willOffValue" value="0"></div>
+			</div>
+			<div>
+			<div class="attribute"><a>HT</a></div>
+			<div class="attribute"><input class="base" type="text" name="htValue" value="10"></div>
+			<div class="attribute"><input class="base" type="text" name="htCost" value="0"></div>
+			<div style="display: table-cell;" expanding="True">
+			<div class="attribute"><a>FP</a></div>
+			<div class="attribute"><input class="base" type="text" name="fpValue" value="10"></div>
+			<div class="attribute"><input class="base" type="text" name="fpCost" value="0"></div>
+			</div>
+			<div class="calculation" id="fpExpand" state="hidden">FP=HT+<input class="tooltip" type="text" name="fpOffValue"	value="0"></div>
+			</div>
+			<div>
+			<div style="display: table-cell;" expanding="True">
+			<div class="attribute"><a>BS</a></div>
+			<div class="attribute"><input class="base" type="text" name="bsValue" value="10"></div>
+			<div class="attribute"><input class="base" type="text" name="bsCost" value="0"></div>
+			</div>
+			<div class="calculation" state="hidden">BS=BS+<input class="tooltip" type="text" name="bsOffValue"	value="0"></div>
+			<div style="display: table-cell;" expanding="True">
+			<div class="attribute"><a>BM</a></div>
+			<div class="attribute"><input class="base" type="text" name="bmValue" value="10"></div>
+			<div class="attribute"><input class="base" type="text" name="bmCost" value="0"></div>
+			</div>
+			<div class="calculation" state="hidden">BM=BM+<input class="tooltip" type="text" name="bmOffValue"	value="0"></div>
+			</div>
+			<div>
+			<div class="attribute"><a>THR</a></div>
+			<div class="attribute"><input class="base" type="text" name="thrValue" value="-"></div>
+			<div class="attribute"></div>
+			<div class="attribute"><a>SWI</a></div>
+			<div class="attribute"><input class="base" type="text" name="swiValue" value="-"></div>
+			<div class="attribute"></div>
+			</div>
+			<div>
+			<div class="attribute"><a>BL</a></div>
+			<div class="attribute"><input class="base" type="text" name="blValue" value="-"></div>
+			</div>
+		</div>
+
+		<div>
+			<table>
+			<tr><td>None (0) = BL</td>			<td><input class="bltable" name="bl0" value="0"></td>	<td>BM × 1</td>		<td><input class="bltable" name="bm0" value="0"></td>	<td>Dodge</td>		<td><input class="bltable" name="do0" value="0"></td></tr>
+			<tr><td>Light (1) = 2 × BL</td>		<td><input class="bltable" name="bl1" value="0"></td>	<td>BM × 0.8</td>	<td><input class="bltable" name="bm1" value="0"></td>	<td>Dodge -1</td>	<td><input class="bltable" name="do1" value="0"></td></tr>
+			<tr><td>Medium (2) = 3 × BL</td>	<td><input class="bltable" name="bl2" value="0"></td>	<td>BM × 0.6</td>	<td><input class="bltable" name="bm2" value="0"></td>	<td>Dodge -2</td>	<td><input class="bltable" name="do2" value="0"></td></tr>
+			<tr><td>Heavy (3) = 6 × BL</td>		<td><input class="bltable" name="bl3" value="0"></td>	<td>BM × 0.4</td>	<td><input class="bltable" name="bm3" value="0"></td>	<td>Dodge -3</td>	<td><input class="bltable" name="do3" value="0"></td></tr>
+			<tr><td>X-Heavy (4) = 10 × BL</td>	<td><input class="bltable" name="bl4" value="0"></td>	<td>BM × 0.2</td>	<td><input class="bltable" name="bm4" value="0"></td>	<td>Dodge -4</td>	<td><input class="bltable" name="do4" value="0"></td></tr>
+			</table>
 		</div>
 		<div>
-		<div class="attribute"><a>DX</a></div>
-		<div class="attribute"><input class="base" type="text" name="dxValue" value="10"></div>
-		<div class="attribute"><input class="base" type="text" name="dxCost" value="0"></div>
-		<div style="display: table-cell;" expanding="True">
-		<div class="attribute"><a>Per</a></div>
-		<div class="attribute"><input class="base" type="text" name="perValue" value="10"></div>
-		<div class="attribute"><input class="base" type="text" name="perCost" value="0"></div>
+			<table>
+			<tr><td>Languages</td><td>Spoken</td><td>Written</td><td></td></tr>
+			<tr><td><input object="lan" name="Name" value="-"></td><td><input object="lan" name="Spoken" value="-"></td><td><input object="lan" name="Wri" value="-"></td><td><input object="lan" name="Cost" value="-"></td></tr>
+			</table>
 		</div>
-		<div class="calculation" id="perExpand" state="hidden">Per=IQ+<input class="tooltip" type="text" name="perOffValue" value="0"></div>
-		</div>
-		<div>
-		<div class="attribute"><a>IQ</a></div>
-		<div class="attribute"><input class="base" type="text" name="iqValue" value="10"></div>
-		<div class="attribute"><input class="base" type="text" name="iqCost" value="0"></div>
-		<div style="display: table-cell;" expanding="True">
-		<div class="attribute"><a>Will</a></div>
-		<div class="attribute"><input class="base" type="text" name="willValue" value="10"></div>
-		<div class="attribute"><input class="base" type="text" name="willCost" value="0"></div>
-		</div>
-		<div class="calculation" id="willExpand" state="hidden">Will=IQ+<input class="tooltip" type="text" name="willOffValue" value="0"></div>
-		</div>
-		<div>
-		<div class="attribute"><a>HT</a></div>
-		<div class="attribute"><input class="base" type="text" name="htValue" value="10"></div>
-		<div class="attribute"><input class="base" type="text" name="htCost" value="0"></div>
-		<div style="display: table-cell;" expanding="True">
-		<div class="attribute"><a>FP</a></div>
-		<div class="attribute"><input class="base" type="text" name="fpValue" value="10"></div>
-		<div class="attribute"><input class="base" type="text" name="fpCost" value="0"></div>
-		</div>
-		<div class="calculation" id="fpExpand" state="hidden">FP=HT+<input class="tooltip" type="text" name="fpOffValue"	value="0"></div>
-		</div>
-		<div>
-		<div style="display: table-cell;" expanding="True">
-		<div class="attribute"><a>BS</a></div>
-		<div class="attribute"><input class="base" type="text" name="bsValue" value="10"></div>
-		<div class="attribute"><input class="base" type="text" name="bsCost" value="0"></div>
-		</div>
-		<div class="calculation" state="hidden">BS=BS+<input class="tooltip" type="text" name="bsOffValue"	value="0"></div>
-		<div style="display: table-cell;" expanding="True">
-		<div class="attribute"><a>BM</a></div>
-		<div class="attribute"><input class="base" type="text" name="bmValue" value="10"></div>
-		<div class="attribute"><input class="base" type="text" name="bmCost" value="0"></div>
-		</div>
-		<div class="calculation" state="hidden">BM=BM+<input class="tooltip" type="text" name="bmOffValue"	value="0"></div>
-		</div>
-		<div>
-		<div class="attribute"><a expanding="True" expandName="thrExpand">THR</a></div>
-		<div class="attribute"><input class="base" type="text" name="thrValue" value="-"></div>
-		<div class="attribute"></div>
-		<div class="attribute"><a expanding="True" expandName="swingExpand">SWI</a></div>
-		<div class="attribute"><input class="base" type="text" name="swiValue" value="-"></div>
-		<div class="attribute"></div>
-		</div>
-		<div>
-		<div class="attribute"><a expanding="True" expandName="BLExpand">BL</a></div>
-		<div class="attribute"><input class="base" type="text" name="blValue" value="-"></div>
-		</div>
-	<!-- <div class="calculation" id="hpExpand" state="hidden">HP=ST+<input class="base" type="text" name="hpOffValue"	value="0"></div> -->
-	<!-- <div class="calculation" id="perExpand" state="hidden">Per=IQ+<input class="base" type="text" name="perOffValue"	value="0"></div> -->
-	
-	
-	<div class="calculation" id="bsExpand" state="hidden">BS=(DX+HT)/4+<input class="tooltip" type="text" name="bsOffValue"	value="0"></div>
-	<div class="calculation" id="bmExpand" state="hidden">BM=Floor((DX+HT)/4)+<input class="tooltip" type="text" name="bmOffValue"	value="0"></div>
-</div>
 <!-- <button type="button" onclick="aFunction()">Click Me!</button> 	 -->
 </form>
 <script src="javascripts/jquery.qtip.js"></script>
@@ -173,17 +192,28 @@ function returnAttr(k, v){
 function addAttr(){
 // window.alert("CHANGE!");
 var inputName = $(this).attr('name');
+console.log(inputName);
+var objectName = $(this).attr('object');
+console.log(objectName);
 var inputValue = this.value;
-a[inputName] = inputValue;
+
+if(objectName == undefined) {
+	console.log("K:V");
+	a[inputName] = inputValue;	
+} else {
+	console.log("O:K:V");
+	console.log(objectName);
+	a[objectName];
+	a[objectName[inputName]] = inputValue;
+	console.log(a);
+}
+
 calculateJson();
 // console.log("change: "+ inputName +" | "+ inputValue);
 }
 
 // End of JSON Convert
-function aFunction(){
-	console.log($('[name="hpOffValue"]'));
-	console.log($('[name="hpOffValue"]').val());
-}
+
 $('[expanding="True"]').each(function() {
     $(this).qtip({
         content: {text: $(this).next('div.calculation')},
@@ -205,16 +235,33 @@ function calculateJson() {
 	a.fpValue =		parseInt(a.fpOffValue)+parseInt(a.htValue);
 	a.bsValue =		parseFloat(a.bsOffValue)+((parseInt(a.dxValue)+parseInt(a.htValue))/4);
 	a.bmValue =		parseFloat(a.bmOffValue)+Math.floor(((parseInt(a.dxValue)+parseInt(a.htValue))/4));
+	a.blValue =		roundToOne(((a.stValue*a.stValue)/5)*0.454);
 	a.hpCost =		a.hpOffValue*2;
 	a.perCost =		a.perOffValue*5;
 	a.willCost =	a.willOffValue*5;
 	a.fpCost =		a.fpOffValue*3;
 	a.bsCost =		a.bsOffValue*20;
+	a.bmCost =		a.bmOffValue*5;
 	stLookup =		"st"+a.stValue;
 	a.thrValue =	strChart[stLookup].thr;
 	a.swiValue =	strChart[stLookup].swi;
-	a.blValue =		roundToOne(((a.stValue*a.stValue)/5)*0.454);
-	$.each(a, returnAttr);	
+	a.dodgeValue =	Math.floor(((parseInt(a.dxValue)+parseInt(a.htValue))/4))+3;
+	a.bl0 =			a.stValue;
+	a.bl1 =			a.stValue*2;
+	a.bl2 =			a.stValue*3;
+	a.bl3 =			a.stValue*6;
+	a.bl4 =			a.stValue*10;
+	a.bm0 =			Math.floor(a.bmValue*1);
+	a.bm1 =			Math.floor(a.bmValue*0.8);
+	a.bm2 =			Math.floor(a.bmValue*0.6);
+	a.bm3 =			Math.floor(a.bmValue*0.4);
+	a.bm4 =			Math.floor(a.bmValue*0.2);
+	a.do0 =			a.dodgeValue-0;
+	a.do1 =			a.dodgeValue-1;
+	a.do2 =			a.dodgeValue-2;
+	a.do3 =			a.dodgeValue-3;
+	a.do4 =			a.dodgeValue-4;
+	$.each(a, returnAttr);
 }
 
 
@@ -261,6 +308,6 @@ function parseValue(o) {
 function roundToOne(num) {    
     return +(Math.round(num + "e+1")  + "e-1");
 }
-
+console.log(a);
 </script>
 </html>
