@@ -167,7 +167,7 @@
 		<div>
 			<table>
 			<tr><td>Languages</td><td>Spoken</td><td>Written</td><td></td></tr>
-			<tr><td><input object="lan" name="Name" value="-"></td><td><input object="lan" name="Spoken" value="-"></td><td><input object="lan" name="Wri" value="-"></td><td><input object="lan" name="Cost" value="-"></td></tr>
+			<tr index="0"><td><input object="lan" name="Name" value="-"></td><td><input object="lan" name="Spoken" value="-"></td><td><input object="lan" name="Wri" value="-"></td><td><input object="lan" name="Cost" value="-"></td><td> <button type="button" onclick="lanTable($(this))">Click Me!</button></td></tr>
 			</table>
 		</div>
 <!-- <button type="button" onclick="aFunction()">Click Me!</button> 	 -->
@@ -183,6 +183,10 @@ $('input').each(addAttr);
 $('input').change(addAttr);
 $.each(a, returnAttr);
 
+function checkAttr(){
+	$('input').each(addAttr);
+}
+
 function returnAttr(k, v){
 	// console.log(k);
 	$('[name="'+k+'"]').val(v);
@@ -192,20 +196,20 @@ function returnAttr(k, v){
 function addAttr(){
 // window.alert("CHANGE!");
 var inputName = $(this).attr('name');
-console.log(inputName);
 var objectName = $(this).attr('object');
-console.log(objectName);
 var inputValue = this.value;
 
 if(objectName == undefined) {
-	console.log("K:V");
 	a[inputName] = inputValue;	
 } else {
-	console.log("O:K:V");
-	console.log(objectName);
-	a[objectName]={};
-	a[objectName][inputName] = inputValue;
-	console.log(a);
+	var index = $(this).parents('[index]').attr('index');
+	if(a[objectName]== undefined){
+		a[objectName]={};
+	}
+	if(a[objectName][index]== undefined){
+		a[objectName][index]={};
+	}
+	a[objectName][index][inputName] = inputValue;
 }
 
 calculateJson();
@@ -264,6 +268,16 @@ function calculateJson() {
 	$.each(a, returnAttr);
 }
 
+function lanTable(buttonObject){
+	var parent = $(buttonObject).parents('[index]');
+	console.log(parent);
+	var parentIndex= parseInt($(parent).attr('index'))+parseInt(1);
+	console.log(parentIndex);
+	$(parent).after('<tr index="'+parentIndex+'"><td><input object="lan" name="Name" value="-"></td><td><input object="lan" name="Spoken" value="-"></td><td><input object="lan" name="Wri" value="-"></td><td><input object="lan" name="Cost" value="-"></td><td> <button type="button" onclick="lanTable($(this))">Click Me!</button></td></tr>');
+	$(buttonObject).hide();
+	checkAttr()
+	console.log(a);
+}
 
 function calculateForm() {
 	// var x = document.getElementById("frm1");
