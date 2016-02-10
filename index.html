@@ -167,7 +167,7 @@
 		<div>
 			<table>
 			<tr><td>Languages</td><td>Spoken</td><td>Written</td><td></td></tr>
-			<tr index="0"><td><input object="lan" name="Name" value="-"></td><td><input object="lan" name="Spoken" value="-"></td><td><input object="lan" name="Wri" value="-"></td><td><input object="lan" name="Cost" value="-"></td><td> <button type="button" onclick="lanTable($(this))">Click Me!</button></td></tr>
+			<tr index="0"><td><input object="lan" name="Name" value="-"></td><td><input object="lan" name="Spoken" value="Native"></td><td><input object="lan" name="Wri" value="Native"></td><td><input object="lan" name="Cost" value=""></td><td> <button type="button" onclick="lanTable($(this))">Click Me!</button></td></tr>
 			</table>
 		</div>
 <!-- <button type="button" onclick="aFunction()">Click Me!</button> 	 -->
@@ -188,10 +188,22 @@ function checkAttr(){
 }
 
 function returnAttr(k, v){
-	// console.log(k);
+	console.log("k: "+k+":"+v);
 	$('[name="'+k+'"]').val(v);
-	// console.log(v);
+	if(Array.isArray(v)){
+		console.log("isArray");
+		console.log(k);
+		console.log(v);
+		v.forEach(function(aO){$(aO).each(returnAttr);});
+		// $(v).each(returnAttrArray);
+	}
 }
+
+function returnAttrArray(k, v){
+	console.log("send v")
+	$(v).each(returnAttr);
+}
+
 
 function addAttr(){
 // window.alert("CHANGE!");
@@ -202,9 +214,9 @@ var inputValue = this.value;
 if(objectName == undefined) {
 	a[inputName] = inputValue;	
 } else {
-	var index = $(this).parents('[index]').attr('index');
+	var index = parseInt($(this).parents('[index]').attr('index'));
 	if(a[objectName]== undefined){
-		a[objectName]={};
+		a[objectName]=[{}];
 	}
 	if(a[objectName][index]== undefined){
 		a[objectName][index]={};
@@ -265,6 +277,14 @@ function calculateJson() {
 	a.do2 =			a.dodgeValue-2;
 	a.do3 =			a.dodgeValue-3;
 	a.do4 =			a.dodgeValue-4;
+
+	if(a.lan != undefined){
+		if(a.lan[0].Spoken=="Native"){
+		a.lan[0].Cost = 0;
+	} else {
+		a.lan[0].Cost = -3;
+	}
+}
 	$.each(a, returnAttr);
 }
 
@@ -276,7 +296,6 @@ function lanTable(buttonObject){
 	$(parent).after('<tr index="'+parentIndex+'"><td><input object="lan" name="Name" value="-"></td><td><input object="lan" name="Spoken" value="-"></td><td><input object="lan" name="Wri" value="-"></td><td><input object="lan" name="Cost" value="-"></td><td> <button type="button" onclick="lanTable($(this))">Click Me!</button></td></tr>');
 	$(buttonObject).hide();
 	checkAttr()
-	console.log(a);
 }
 
 function calculateForm() {
@@ -312,16 +331,18 @@ function calculateForm() {
 	// x.bsValue.value = (parseFloat(x.bsOffValue.value)+((parseFloat(x.htValue.value)+parseFloat(x.dxValue.value))/4));
 	// x.bsCost.value = "["+(parseFloat(x.bsOffValue.value))*20+"]";
 }
-function parseValue(o) {
-	c = "[name='"+o.attr("target")+"']"
-	var targetObject = $(c);
-	var valueChange = o.val();
-	targetObject.val(valueChange);
+// function parseValue(o) {
+// 	c = "[name='"+o.attr("target")+"']"
+// 	var targetObject = $(c);
+// 	var valueChange = o.val();
+// 	console.log(targetObject);
+// 	console.log('hello');
+// 	targetObject.val(valueChange);
 
-}
+// }
+// console.log(JSON.stringify(a));
 function roundToOne(num) {    
     return +(Math.round(num + "e+1")  + "e-1");
 }
-console.log(a);
 </script>
 </html>
