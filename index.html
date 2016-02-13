@@ -13,6 +13,22 @@
 //     });
 // });
 </script>
+<script type="text/javascript">
+		var importList = ['strChart','hello'];
+		$.each(importList,function(y,z){
+			$.ajax({
+			  url:"data/"+z+".json",
+			  beforeSend: function(xhr){
+			    if (xhr.overrideMimeType){xhr.overrideMimeType("application/json");}},
+			  type:"GET",
+			  dataType:"json",
+			  cache:false,
+			}).done(function(data){
+				console.log("loaded: "+z+".json");
+				window[z] = data;
+			});
+		});
+</script>
 <head>
 <link type="text/css" rel="stylesheet" href="stylesheets/jquery.qtip.css" />
 <style type="text/css">
@@ -174,11 +190,10 @@
 </form>
 <script src="javascripts/jquery.qtip.js"></script>
 </body>
-<script src="data/strChart.js"></script>
 <script>
 //JSON Convert
-var a = {};
 
+var a = {};
 $('input').each(addAttr);
 $('input').change(addAttr);
 $.each(a, returnAttr);
@@ -188,19 +203,19 @@ function checkAttr(){
 }
 
 function returnAttr(k, v){
-	console.log("k: "+k+":"+v);
+	// console.log("k: "+k+":"+v);
 	$('[name="'+k+'"]').val(v);
 	if(Array.isArray(v)){
-		console.log("isArray");
-		console.log(k);
-		console.log(v);
+		// console.log("isArray");
+		// console.log(k);
+		// console.log(v);
 		v.forEach(function(aO){$(aO).each(returnAttr);});
 		// $(v).each(returnAttrArray);
 	}
 }
 
 function returnAttrArray(k, v){
-	console.log("send v")
+	// console.log("send v")
 	$(v).each(returnAttr);
 }
 
@@ -290,9 +305,9 @@ function calculateJson() {
 
 function lanTable(buttonObject){
 	var parent = $(buttonObject).parents('[index]');
-	console.log(parent);
+	// console.log(parent);
 	var parentIndex= parseInt($(parent).attr('index'))+parseInt(1);
-	console.log(parentIndex);
+	// console.log(parentIndex);
 	$(parent).after('<tr index="'+parentIndex+'"><td><input object="lan" name="Name" value="-"></td><td><input object="lan" name="Spoken" value="-"></td><td><input object="lan" name="Wri" value="-"></td><td><input object="lan" name="Cost" value="-"></td><td> <button type="button" onclick="lanTable($(this))">Click Me!</button></td></tr>');
 	$(buttonObject).hide();
 	checkAttr()

@@ -20,6 +20,3 @@ var strChart = {
 	"st19": {"thr": "2d-1", "swi": "3d+1"},
 	"st20": {"thr": "2d-1", "swi": "3d+2"}
 	};
-
-	console.log(strChart.st1.thr);
-	console.log(strChart.st1.swi);
