@@ -4,16 +4,6 @@
 <html>
 <script src="javascripts/jquery-2.2.0.min.js"></script>
 <script type="text/javascript">
-// $(document).ready(function(){
-//     $('[expanding="True"]').click(function(){
-//     	$('[state="hidden"]').hide();
-//     	showTarget = "#"+$(this).attr("expandName");
-//       $(showTarget).show(500);
-//       // $(hideTarget).animate({width: 'toggle'});
-//     });
-// });
-</script>
-<script type="text/javascript">
 		var importList = ['strChart','hello'];
 		$.each(importList,function(y,z){
 			$.ajax({
@@ -32,14 +22,24 @@
 <head>
 <link type="text/css" rel="stylesheet" href="stylesheets/jquery.qtip.css" />
 <style type="text/css">
+	@import url(https://fonts.googleapis.com/css?family=Josefin+Sans:400,700,600,400italic,600italic,700italic,100,100italic,300,300italic);
 	html, body {
 		background-color:#ffffff;
 		margin:0 0 0 0;
 		height:100%;
+		font-family: 'Josefin Sans', Calibri, sans-serif;
+		font-weight: 600;
 	}
-	input{
+	input,select	{
 		border:none;
 		padding:0px;
+		font-family: 'Josefin Sans', Calibri, sans-serif;
+		font-weight: 400;
+	}
+	input::-moz-placeholder {  /* Firefox 19+ */
+	font-weight: 400;
+	font-style: italic;
+	opacity: 0.2;
 	}
 	input.base{
 		width:50px;
@@ -49,6 +49,9 @@
 	input.bltable{
 		width:30px;
 		text-align: center;
+	}
+	input[object="lan"]{
+		width:100px;
 	}
 	input.tooltip{
 		width:30px;
@@ -170,7 +173,7 @@
 			<div class="attribute"><input class="base" type="text" name="blValue" value="-"></div>
 			</div>
 		</div>
-
+		<hr>
 		<div>
 			<table>
 			<tr><td>None (0) = BL</td>			<td><input class="bltable" name="bl0" value="0"></td>	<td>BM × 1</td>		<td><input class="bltable" name="bm0" value="0"></td>	<td>Dodge</td>		<td><input class="bltable" name="do0" value="0"></td></tr>
@@ -180,10 +183,19 @@
 			<tr><td>X-Heavy (4) = 10 × BL</td>	<td><input class="bltable" name="bl4" value="0"></td>	<td>BM × 0.2</td>	<td><input class="bltable" name="bm4" value="0"></td>	<td>Dodge -4</td>	<td><input class="bltable" name="do4" value="0"></td></tr>
 			</table>
 		</div>
+		<hr>
 		<div>
 			<table>
 			<tr><td>Languages</td><td>Spoken</td><td>Written</td><td></td></tr>
-			<tr index="0"><td><input object="lan" name="Name" value="-"></td><td><input object="lan" name="Spoken" value="Native"></td><td><input object="lan" name="Wri" value="Native"></td><td><input object="lan" name="Cost" value=""></td><td> <button type="button" onclick="lanTable($(this))">Click Me!</button></td></tr>
+			<tr index="0"><td><input index="0" object="lan" name="Name" value="-"></td><td><select index="0" object="lan" name="Spoken" value="Native"><option>Native</option><option>Accented</option><option>Broken</option><option>None</option></select></td><td><select index="0" object="lan" name="Wri" value="Native"><option>Native</option><option>Accented</option><option>Broken</option><option>None</option></select></td><td><input index="0" object="lan" name="Cost" value=""></td><td> <button type="button" onclick="">-</button><button type="button" onclick="lanTable($(this))">+</button></td></tr>
+			</table>
+		</div>
+		<hr>
+		<div>
+		<a>TL: </a><input name="tlValue"><br>
+		<a>Cultural Familiarities</a>
+			<table>
+			<tr index="0"><td><input index="0" object="clFam" name="Name" value="Local"></td><td><input index="0" object="clFam" name="Cost" value=""></td><td> <button type="button" onclick="">-</button><button type="button" onclick="culTable($(this))">+</button></td></tr>
 			</table>
 		</div>
 <!-- <button type="button" onclick="aFunction()">Click Me!</button> 	 -->
@@ -194,34 +206,40 @@
 //JSON Convert
 
 var a = {};
-$('input').each(addAttr);
-$('input').change(addAttr);
+$('input,select').each(addAttr);
+// $('input').change(addAttr);
+$(document).on('change','input,select', addAttr);
 $.each(a, returnAttr);
 
 function checkAttr(){
-	$('input').each(addAttr);
+	$('input,select').each(addAttr);
 }
 
 function returnAttr(k, v){
 	// console.log("k: "+k+":"+v);
-	$('[name="'+k+'"]').val(v);
 	if(Array.isArray(v)){
 		// console.log("isArray");
 		// console.log(k);
 		// console.log(v);
-		v.forEach(function(aO){$(aO).each(returnAttr);});
+		$(v).each(function(zs,aO){
+			window.arrayIndex = zs;
+			window.arrayName = k;
+			$.each(aO, returnAttrArray);});
 		// $(v).each(returnAttrArray);
+	}else{
+	$('[name="'+k+'"]').val(v);
 	}
+
 }
 
 function returnAttrArray(k, v){
 	// console.log("send v")
-	$(v).each(returnAttr);
+	$('[name="'+k+'"][object="'+arrayName+'"][index="'+arrayIndex+'"]').val(v);
 }
 
 
 function addAttr(){
-// window.alert("CHANGE!");
+// console.log("CHANGE!");
 var inputName = $(this).attr('name');
 var objectName = $(this).attr('object');
 var inputValue = this.value;
@@ -241,6 +259,7 @@ if(objectName == undefined) {
 
 calculateJson();
 // console.log("change: "+ inputName +" | "+ inputValue);
+console.log(a);
 }
 
 // End of JSON Convert
@@ -248,8 +267,8 @@ calculateJson();
 $('[expanding="True"]').each(function() {
     $(this).qtip({
         content: {text: $(this).next('div.calculation')},
-        show: {solo: true,effect: function() {$(this).fadeTo(500, 1); }},
-        hide: {event: 'click unfocus', inactive: 3000,effect: function() {$(this).fadeTo(500, 0); }},
+        show: {event: 'mouseover click', solo: true,effect: function() {$(this).fadeTo(500, 1); }},
+        hide: {event: 'click unfocus',effect: function() {$(this).fadeTo(500, 0); }},
         position: {my: 'left center', at: 'center right',viewport: $(window)}});
 });
 
@@ -293,13 +312,35 @@ function calculateJson() {
 	a.do3 =			a.dodgeValue-3;
 	a.do4 =			a.dodgeValue-4;
 
-	if(a.lan != undefined){
-		if(a.lan[0].Spoken=="Native"){
-		a.lan[0].Cost = 0;
-	} else {
-		a.lan[0].Cost = -3;
-	}
-}
+	$.each(a.lan, function(i,k){
+		console.log(i);
+		if (i==0){
+		var lanReplace = {"Native":0,"Accented":-1, "Broken":-2, "None":-3};
+			if(k.Spoken != undefined){
+			var lanS = k.Spoken;
+			var lanSCost = lanS.replace(/Native|Accented|Broken|None/gi, function(matched){return lanReplace[matched];});
+		}
+		if(k.Wri != undefined){
+			var lanW = k.Wri;
+			var lanWCost = lanW.replace(/Native|Accented|Broken|None/gi, function(matched){return lanReplace[matched];});
+		}
+		}else{
+		var lanReplace = {"Native":3,"Accented":2, "Broken":1, "None":0};
+			if(k.Spoken != undefined){
+			var lanS = k.Spoken;
+			var lanSCost = lanS.replace(/Native|Accented|Broken|None/gi, function(matched){return lanReplace[matched];});
+		}
+		if(k.Wri != undefined){
+			var lanW = k.Wri;
+			var lanWCost = lanW.replace(/Native|Accented|Broken|None/gi, function(matched){return lanReplace[matched];});
+		}	
+		}
+			console.log(k);
+			console.log(i +": "+lanSCost);
+			console.log(i +": "+lanSCost);
+			k.Cost = parseInt(lanSCost)+parseInt(lanWCost);
+	});
+
 	$.each(a, returnAttr);
 }
 
@@ -308,43 +349,18 @@ function lanTable(buttonObject){
 	// console.log(parent);
 	var parentIndex= parseInt($(parent).attr('index'))+parseInt(1);
 	// console.log(parentIndex);
-	$(parent).after('<tr index="'+parentIndex+'"><td><input object="lan" name="Name" value="-"></td><td><input object="lan" name="Spoken" value="-"></td><td><input object="lan" name="Wri" value="-"></td><td><input object="lan" name="Cost" value="-"></td><td> <button type="button" onclick="lanTable($(this))">Click Me!</button></td></tr>');
+	$(parent).after('<tr index="'+parentIndex+'"><td><input index="'+parentIndex+'" object="lan" name="Name" value="" placeholder="Language Name"></td><td><select index="'+parentIndex+'" object="lan" name="Spoken" value="Native"><option>Native</option><option>Accented</option><option>Broken</option><option>None</option></select></td><td><select index="'+parentIndex+'" object="lan" name="Wri" value="Native"><option>Native</option><option>Accented</option><option>Broken</option><option>None</option></select></td><td><input index="'+parentIndex+'" object="lan" name="Cost" value="-"></td><td> <button type="button" onclick="">-</button><button type="button" onclick="lanTable($(this))">+</button></td></tr>');
 	$(buttonObject).hide();
 	checkAttr()
 }
-
-function calculateForm() {
-	// var x = document.getElementById("frm1");
-	// $('[name="stCost"]').val("["+(parseInt($('[name="stValue"]').val())-10)*10 + "]");
-	// $('[name="dxCost"]').val("["+(parseInt($('[name="dxValue"]').val())-10)*20 + "]");
-	// $('[name="iqCost"]').val("["+(parseInt($('[name="iqValue"]').val())-10)*20 + "]");
-	// $('[name="htCost"]').val("["+(parseInt($('[name="htValue"]').val())-10)*10 + "]");
-	// $('[name="hpValue"]').val((parseInt($('[name="hpOffValue"]').val())+parseInt($('[name="stValue"]').val())));
-	// $('[name="hpCost"]').val("["+(parseInt($('[name="hpOffValue"]').val()))*2+"]");
-	// $('[name="perValue"]').val((parseInt($('[name="perOffValue"]').val())+parseInt($('[name="iqValue"]').val())));
-	// $('[name="perCost"]').val("["+(parseInt($('[name="perOffValue"]').val()))*5+"]");
-	// $('[name="willValue"]').val((parseInt($('[name="willOffValue"]').val())+parseInt($('[name="iqValue"]').val())));
-	// $('[name="willCost"]').val("["+(parseInt($('[name="willOffValue"]').val()))*5+"]");
-	// $('[name="fpValue"]').val((parseInt($('[name="fpOffValue"]').val())+parseInt($('[name="htValue"]').val())));
-	// $('[name="fpCost"]').val("["+(parseInt($('[name="fpOffValue"]').val()))*3+"]");
-	// $('[name="bsValue"]').val((parseFloat($('[name="bsOffValue"]').val())+((parseFloat($('[name="htValue"]').val())+parseFloat($('[name="dxValue"]').val()))/4)));
-	// $('[name="bsCost"]').val("["+(parseFloat($('[name="bsOffValue"]').val()))*20+"]");
-	
-
-	// x.stCost.value = "["+(parseInt(x.stValue.value)-10)*10 + "]";
-	// x.dxCost.value = "["+(parseInt(x.dxValue.value)-10)*20 + "]";
-	// x.iqCost.value = "["+(parseInt(x.iqValue.value)-10)*20 + "]";
-	// x.htCost.value = "["+(parseInt(x.htValue.value)-10)*10 + "]";
-	// x.hpValue.value = (parseInt(x.hpOffValue.value)+parseInt(x.stValue.value));
-	// x.hpCost.value = "["+(parseInt(x.hpOffValue.value))*2+"]";
-	// x.perValue.value = (parseInt(x.perOffValue.value)+parseInt(x.iqValue.value));
-	// x.perCost.value = "["+(parseInt(x.perOffValue.value))*5+"]";
-	// x.willValue.value = (parseInt(x.willOffValue.value)+parseInt(x.iqValue.value));
-	// x.willCost.value = "["+(parseInt(x.willOffValue.value))*5+"]";
-	// x.fpValue.value = (parseInt(x.fpOffValue.value)+parseInt(x.htValue.value));
-	// x.fpCost.value = "["+(parseInt(x.fpOffValue.value))*3+"]";
-	// x.bsValue.value = (parseFloat(x.bsOffValue.value)+((parseFloat(x.htValue.value)+parseFloat(x.dxValue.value))/4));
-	// x.bsCost.value = "["+(parseFloat(x.bsOffValue.value))*20+"]";
+function culTable(buttonObject){
+	var parent = $(buttonObject).parents('[index]');
+	// console.log(parent);
+	var parentIndex= parseInt($(parent).attr('index'))+parseInt(1);
+	// console.log(parentIndex);
+	$(parent).after('<tr index="'+parentIndex+'"><td><input index="'+parentIndex+'" object="clFam" name="Name" value="" placeholder="Culture Name"></td><td><input index="'+parentIndex+'" object="clFam" name="Cost" value="0"></td><td> <button type="button" onclick="">-</button><button type="button" onclick="culTable($(this))">+</button></td></tr>');
+	$(buttonObject).hide();
+	checkAttr()
 }
 // function parseValue(o) {
 // 	c = "[name='"+o.attr("target")+"']"
