@@ -232,9 +232,9 @@ $(document).ready(function(){
 
 $('input,select').each(addAttr);
 // $('input').change(addAttr);
-$(document).on('change','input,select', addAttr);
 $.each(a, returnAttr);
 });
+$(document).on('change','input,select', addAttr);
 
 function checkAttr(){
 	$('input,select').each(addAttr);
