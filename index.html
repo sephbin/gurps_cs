@@ -30,11 +30,21 @@
 		font-family: 'Josefin Sans', Calibri, sans-serif;
 		font-weight: 600;
 	}
+	button{
+	background-color: #FFF;
+    border: none;
+    color: red;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: 700;
+	}
 	input,select	{
 		border:none;
 		padding:0px;
 		font-family: 'Josefin Sans', Calibri, sans-serif;
 		font-weight: 400;
+		-moz-appearance: none;
 	}
 	input::-moz-placeholder {  /* Firefox 19+ */
 	font-weight: 400;
@@ -60,6 +70,9 @@
 		border:none;
 		text-align: center;
 		font-weight: bold;
+	}
+	[align="c"]{
+		text-align: center;
 	}
 	div.sidebar{
 		width: 80px;
@@ -92,6 +105,11 @@
 	}
 	table, th, td {
     border: 0px solid black;
+    border-spacing: 0;
+    border-collapse: collapse;
+	}
+	[ul] {
+		border-bottom: 1px solid #DDD;
 	}
 </style>
 </head>
@@ -186,8 +204,10 @@
 		<hr>
 		<div>
 			<table>
-			<tr><td>Languages</td><td>Spoken</td><td>Written</td><td></td></tr>
-			<tr index="0"><td><input index="0" object="lan" name="Name" value="-"></td><td><select index="0" object="lan" name="Spoken" value="Native"><option>Native</option><option>Accented</option><option>Broken</option><option>None</option></select></td><td><select index="0" object="lan" name="Wri" value="Native"><option>Native</option><option>Accented</option><option>Broken</option><option>None</option></select></td><td><input index="0" object="lan" name="Cost" value=""></td><td> <button type="button" onclick="">-</button><button type="button" onclick="lanTable($(this))">+</button></td></tr>
+			<tr><td>Languages</td><td align="c">Spoken</td><td align="c">Written</td><td></td></tr>
+			<tr index="0"><td ul="T"><input index="0" object="lan" name="Name" value="-"></td><td ul="T"><select index="0" object="lan" name="Spoken" value="Native" align="c"><option>Native</option><option>Accented</option><option>Broken</option><option>None</option></select></td><td ul="T"><select index="0" object="lan" name="Wri" value="Native" align="c"><option>Native</option><option>Accented</option><option>Broken</option><option>None</option></select></td><td ul="T"><input index="0" object="lan" name="Cost" value="" align="c"></td><td>
+				<!-- <button type="button" onclick="delRowTable($(this))">-</button> -->
+				<button type="button" onclick="lanTable($(this))">+</button></td></tr>
 			</table>
 		</div>
 		<hr>
@@ -195,7 +215,9 @@
 		<a>TL: </a><input name="tlValue"><br>
 		<a>Cultural Familiarities</a>
 			<table>
-			<tr index="0"><td><input index="0" object="clFam" name="Name" value="Local"></td><td><input index="0" object="clFam" name="Cost" value=""></td><td> <button type="button" onclick="">-</button><button type="button" onclick="culTable($(this))">+</button></td></tr>
+			<tr index="0"><td ul="T"><input index="0" object="clFam" name="Name" value="" placeholder="Native Culture Name"></td><td ul="T"><input index="0" object="clFam" name="Cost" value="" align="c"></td><td>
+				<!-- <button type="button" onclick="">-</button> -->
+				<button type="button" onclick="culTable($(this))">+</button></td></tr>
 			</table>
 		</div>
 <!-- <button type="button" onclick="aFunction()">Click Me!</button> 	 -->
@@ -206,10 +228,13 @@
 //JSON Convert
 
 var a = {};
+$(document).ready(function(){
+
 $('input,select').each(addAttr);
 // $('input').change(addAttr);
 $(document).on('change','input,select', addAttr);
 $.each(a, returnAttr);
+});
 
 function checkAttr(){
 	$('input,select').each(addAttr);
@@ -259,7 +284,7 @@ if(objectName == undefined) {
 
 calculateJson();
 // console.log("change: "+ inputName +" | "+ inputValue);
-console.log(a);
+// console.log(a);
 }
 
 // End of JSON Convert
@@ -295,12 +320,12 @@ function calculateJson() {
 	stLookup =		"st"+a.stValue;
 	a.thrValue =	strChart[stLookup].thr;
 	a.swiValue =	strChart[stLookup].swi;
-	a.dodgeValue =	Math.floor(((parseInt(a.dxValue)+parseInt(a.htValue))/4))+3;
-	a.bl0 =			a.stValue;
-	a.bl1 =			a.stValue*2;
-	a.bl2 =			a.stValue*3;
-	a.bl3 =			a.stValue*6;
-	a.bl4 =			a.stValue*10;
+	a.dodgeValue =	a.bmValue+3;
+	a.bl0 =			Math.ceil(a.blValue);
+	a.bl1 =			Math.ceil(a.blValue*2);
+	a.bl2 =			Math.ceil(a.blValue*3);
+	a.bl3 =			Math.ceil(a.blValue*6);
+	a.bl4 =			Math.ceil(a.blValue*10);
 	a.bm0 =			Math.floor(a.bmValue*1);
 	a.bm1 =			Math.floor(a.bmValue*0.8);
 	a.bm2 =			Math.floor(a.bmValue*0.6);
@@ -313,7 +338,6 @@ function calculateJson() {
 	a.do4 =			a.dodgeValue-4;
 
 	$.each(a.lan, function(i,k){
-		console.log(i);
 		if (i==0){
 		var lanReplace = {"Native":0,"Accented":-1, "Broken":-2, "None":-3};
 			if(k.Spoken != undefined){
@@ -335,21 +359,29 @@ function calculateJson() {
 			var lanWCost = lanW.replace(/Native|Accented|Broken|None/gi, function(matched){return lanReplace[matched];});
 		}	
 		}
-			console.log(k);
-			console.log(i +": "+lanSCost);
-			console.log(i +": "+lanSCost);
 			k.Cost = parseInt(lanSCost)+parseInt(lanWCost);
+	});
+	$.each(a.clFam, function(i,k){
+		if (i==0){
+		var clCost = 0;
+		}else{
+		var clCost = 1;
+		}
+		k.Cost = clCost;
 	});
 
 	$.each(a, returnAttr);
 }
+
 
 function lanTable(buttonObject){
 	var parent = $(buttonObject).parents('[index]');
 	// console.log(parent);
 	var parentIndex= parseInt($(parent).attr('index'))+parseInt(1);
 	// console.log(parentIndex);
-	$(parent).after('<tr index="'+parentIndex+'"><td><input index="'+parentIndex+'" object="lan" name="Name" value="" placeholder="Language Name"></td><td><select index="'+parentIndex+'" object="lan" name="Spoken" value="Native"><option>Native</option><option>Accented</option><option>Broken</option><option>None</option></select></td><td><select index="'+parentIndex+'" object="lan" name="Wri" value="Native"><option>Native</option><option>Accented</option><option>Broken</option><option>None</option></select></td><td><input index="'+parentIndex+'" object="lan" name="Cost" value="-"></td><td> <button type="button" onclick="">-</button><button type="button" onclick="lanTable($(this))">+</button></td></tr>');
+	$(parent).after('<tr index="'+parentIndex+'"><td ul="T"><input index="'+parentIndex+'" object="lan" name="Name" value="" placeholder="Language Name"></td><td ul="T"><select index="'+parentIndex+'" object="lan" name="Spoken" value="Native" align="c"><option>Native</option><option>Accented</option><option>Broken</option><option>None</option></select></td><td ul="T"><select index="'+parentIndex+'" object="lan" name="Wri" value="Native" align="c"><option>Native</option><option>Accented</option><option>Broken</option><option>None</option></select></td><td ul="T"><input index="'+parentIndex+'" object="lan" name="Cost" value="-" align="c"></td><td>'+
+		// '<button type="button" onclick="delRowTable($(this))">-</button>'+
+		'<button type="button" onclick="lanTable($(this))">+</button></td></tr>');
 	$(buttonObject).hide();
 	checkAttr()
 }
@@ -358,9 +390,33 @@ function culTable(buttonObject){
 	// console.log(parent);
 	var parentIndex= parseInt($(parent).attr('index'))+parseInt(1);
 	// console.log(parentIndex);
-	$(parent).after('<tr index="'+parentIndex+'"><td><input index="'+parentIndex+'" object="clFam" name="Name" value="" placeholder="Culture Name"></td><td><input index="'+parentIndex+'" object="clFam" name="Cost" value="0"></td><td> <button type="button" onclick="">-</button><button type="button" onclick="culTable($(this))">+</button></td></tr>');
+	$(parent).after('<tr index="'+parentIndex+'"><td ul="T"><input index="'+parentIndex+'" object="clFam" name="Name" value="" placeholder="Culture Name"></td><td ul="T"><input index="'+parentIndex+'" object="clFam" name="Cost" value="0" align="c"></td><td>'+
+		// '<button type="button" onclick="delRowTable($(this))">-</button>'+
+		'<button type="button" onclick="culTable($(this))">+</button></td></tr>');
 	$(buttonObject).hide();
 	checkAttr()
+}
+
+function delRowTable(buttonObject){
+	var parent = $(buttonObject).parents('[index]');
+	var parentType = $(parent).get(0).tagName;
+	var granDad = $(parent).parent();
+	$(parent).remove();
+	var siblings = $(granDad).children(parentType+"[index]")
+	var siblingCount = $(siblings).length;
+	var newIndex = 0;
+	$.each(siblings, function(){
+		$(this).attr('index', newIndex);
+		var childrenFam = $(this).find('input,select');
+		$.each(childrenFam, function(){
+		$(this).attr('index', newIndex);
+		var objectName = $(this).attr('object');
+		$.removeData(a[objectName]);
+		});
+		$.each(childrenFam,addAttr);
+		console.log($(this).attr('index'));
+		newIndex += 1;
+	});
 }
 // function parseValue(o) {
 // 	c = "[name='"+o.attr("target")+"']"
