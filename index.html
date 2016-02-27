@@ -539,19 +539,13 @@ function roundToOne(num) {
     return +(Math.round(num + "e+1")  + "e-1");
 }
 // console.log(a);
-$('a.button').click(function(){
-	console.log(JSON.stringify(a));
-})
+// $('a.button').click(function(){
+	// console.log(JSON.stringify(a));
+// })
 $('a.post').click(function(){
 chars.chars[0] = a;
-newData = JSON.stringify(chars);
-console.log(chars);
-
-var data = a;
-console.log(data);
-var xhr = (window.XMLHttpRequest) ? new XMLHttpRequest() : new activeXObject("Microsoft.XMLHTTP");
-xhr.open( 'post', 'data/post.php', true );
-xhr.send(data);
+var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(chars));
+$('<a href="data:' + data + '" download="data.json">POST</a>').appendTo('.post');
 })
 </script>
 <script src="javascripts/autosize.js"></script>
