@@ -1,24 +1,8 @@
 <!DOCTYPE html>
 <meta charset="UTF-8"> 
-
 <html>
 <script src="javascripts/jquery-2.2.0.min.js"></script>
-<script type="text/javascript">
-		var importList = ['strChart','hello'];
-		$.each(importList,function(y,z){
-			$.ajax({
-			  url:"data/"+z+".json",
-			  beforeSend: function(xhr){
-			    if (xhr.overrideMimeType){xhr.overrideMimeType("application/json");}},
-			  type:"GET",
-			  dataType:"json",
-			  cache:false,
-			}).done(function(data){
-				console.log("loaded: "+z+".json");
-				window[z] = data;
-			});
-		});
-</script>
+<script src="javascripts/jsonQ.js"></script>
 <head>
 <link type="text/css" rel="stylesheet" href="stylesheets/jquery.qtip.css" />
 <style type="text/css">
@@ -29,17 +13,18 @@
 		height:100%;
 		font-family: 'Josefin Sans', Calibri, sans-serif;
 		font-weight: 600;
+		color: #00205C;
 	}
 	button{
-	background-color: #FFF;
-    border: none;
-    color: red;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-weight: 700;
+		background-color: #FFF;
+	    border: none;
+	    color: red;
+	    text-align: center;
+	    text-decoration: none;
+	    display: inline-block;
+	    font-weight: 700;
 	}
-	input,select	{
+	input,select,textarea	{
 		border:none;
 		padding:0px;
 		font-family: 'Josefin Sans', Calibri, sans-serif;
@@ -47,9 +32,14 @@
 		-moz-appearance: none;
 	}
 	input::-moz-placeholder {  /* Firefox 19+ */
-	font-weight: 400;
-	font-style: italic;
-	opacity: 0.2;
+		font-weight: 400;
+		font-style: italic;
+		color: #00205C;
+		opacity: 0.2;
+	}
+	input.identity{
+		text-align: center;
+		width: 100px;
 	}
 	input.base{
 		width:50px;
@@ -75,11 +65,16 @@
 		text-align: center;
 	}
 	div.sidebar{
+		position: absolute;
+		top:0px;
+		bottom: 0px;
 		width: 80px;
-		height: 300vh;
 		background: #F00;
-	  float:left;
 		text-align:center;
+	}
+	div.content{
+		position: absolute;
+		left: 100px;
 	}
 	div.attribute{
 		width: 50px;
@@ -104,12 +99,23 @@
 		text-align:center;
 	}
 	table, th, td {
-    border: 0px solid black;
-    border-spacing: 0;
-    border-collapse: collapse;
+	    border: 0px solid black;
+	    border-spacing: 0;
+	    border-collapse: collapse;
 	}
 	[ul] {
-		border-bottom: 1px solid #DDD;
+		border-bottom: 1px solid rgba(0,25,90,.2);
+	}
+	hr {
+		border-color: rgb(0,25,90);
+	}
+	textarea{
+		width:100%;
+		min-height:0px;
+		overflow:hidden;
+		resize: none;
+		font-family: 'Josefin Sans', Calibri, sans-serif;
+
 	}
 </style>
 </head>
@@ -117,14 +123,29 @@
 
 <form id="frm1">
 		<div class="sidebar">
-		Hello
+		<a class="button">Hello</a>
 		</div>
-		<div style="display:inline-block">
+		<div class="content">
+		<div>
+		<table>
+		<tr align="right"><td><a>Name&nbsp;</a></td><td ul="T"><input class="identity" name="charName" placeholder="Character Name"></input></td><td><a>Player&nbsp;</a><td ul="T"><input class="identity" name="playerName" placeholder="Player Name"></input></td></tr>
+		<tr align="right"><td><a>World&nbsp;</a></td><td ul="T"><input class="identity" name="worldName" placeholder="World Name"></input></td><td><a>Campaign&nbsp;</a></td><td ul="T"><input class="identity" name="campaignName" placeholder="Campaign Name"></input></td></tr>
+		<tr align="right"><td><a>Height&nbsp;</a></td><td ul="T"><input class="identity" name="heightValue" placeholder="? cm"></input></td><td><a>Weight&nbsp;</a><td ul="T"><input class="identity" name="weightValue" placeholder="? kg"></input></td></tr>
+		<tr align="right"><td><a>Size Modifier&nbsp;</a><td ul="T"><input class="identity" name="smValue" value="0"></input></td><td><a>Age&nbsp;</a><td ul="T"><input class="identity" name="ageValue" placeholder="??"></input></td></tr>
+		<tr align="right"><td><a>Apearance&nbsp;</a><td colspan="3" ul="T"><textarea class="identity" rows="1" name="appText" spellcheck="false"></textarea></td></tr>
+		<tr align="right"><td><a>Point Total&nbsp;</a><td ul="T" name="ptValue"><input class="identity"></input></td>
+		<td><a>Unspent Points&nbsp;</a><td ul="T"><input class="identity" name="uptValue"></input></td></tr>
+		</table>
+		</div>
+		<hr>
+		<div>
 			<div>
+			<div style="display:inline-block;">
 			<div class="attribute"><a>ST</a></div>
 			<div class="attribute"><input class="base" type="text" name="stValue" value="10"></div>
 			<div class="attribute"><input class="base" type="text" name="stCost" value="0" readonly></div>
-			<div style="display: table-cell;" expanding="True">
+			</div>
+			<div style="display:inline-block;" expanding="True">
 			<div class="attribute"><a>HP</a></div>
 			<div class="attribute"><input class="base" type="text" name="hpValue" value="10" readonly></div>
 			<div class="attribute"><input class="base" type="text" name="hpCost" value="0" readonly></div>
@@ -132,10 +153,12 @@
 			<div class="calculation" id="hpExpand" state="hidden">HP=ST+<input class="tooltip" type="text" name="hpOffValue" value="0"></div>
 			</div>
 			<div>
+			<div style="display:inline-block;">
 			<div class="attribute"><a>DX</a></div>
 			<div class="attribute"><input class="base" type="text" name="dxValue" value="10"></div>
 			<div class="attribute"><input class="base" type="text" name="dxCost" value="0"></div>
-			<div style="display: table-cell;" expanding="True">
+			</div>
+			<div style="display: inline-block;" expanding="True">
 			<div class="attribute"><a>Per</a></div>
 			<div class="attribute"><input class="base" type="text" name="perValue" value="10"></div>
 			<div class="attribute"><input class="base" type="text" name="perCost" value="0"></div>
@@ -143,10 +166,12 @@
 			<div class="calculation" id="perExpand" state="hidden">Per=IQ+<input class="tooltip" type="text" name="perOffValue" value="0"></div>
 			</div>
 			<div>
+			<div style="display:inline-block;">
 			<div class="attribute"><a>IQ</a></div>
 			<div class="attribute"><input class="base" type="text" name="iqValue" value="10"></div>
 			<div class="attribute"><input class="base" type="text" name="iqCost" value="0"></div>
-			<div style="display: table-cell;" expanding="True">
+			</div>
+			<div style="display: inline-block;" expanding="True">
 			<div class="attribute"><a>Will</a></div>
 			<div class="attribute"><input class="base" type="text" name="willValue" value="10"></div>
 			<div class="attribute"><input class="base" type="text" name="willCost" value="0"></div>
@@ -154,10 +179,12 @@
 			<div class="calculation" id="willExpand" state="hidden">Will=IQ+<input class="tooltip" type="text" name="willOffValue" value="0"></div>
 			</div>
 			<div>
+			<div style="display:inline-block;">
 			<div class="attribute"><a>HT</a></div>
 			<div class="attribute"><input class="base" type="text" name="htValue" value="10"></div>
 			<div class="attribute"><input class="base" type="text" name="htCost" value="0"></div>
-			<div style="display: table-cell;" expanding="True">
+			</div>
+			<div style="display: inline-block;" expanding="True">
 			<div class="attribute"><a>FP</a></div>
 			<div class="attribute"><input class="base" type="text" name="fpValue" value="10"></div>
 			<div class="attribute"><input class="base" type="text" name="fpCost" value="0"></div>
@@ -165,13 +192,13 @@
 			<div class="calculation" id="fpExpand" state="hidden">FP=HT+<input class="tooltip" type="text" name="fpOffValue"	value="0"></div>
 			</div>
 			<div>
-			<div style="display: table-cell;" expanding="True">
+			<div style="display: inline-block;" expanding="True">
 			<div class="attribute"><a>BS</a></div>
 			<div class="attribute"><input class="base" type="text" name="bsValue" value="10"></div>
 			<div class="attribute"><input class="base" type="text" name="bsCost" value="0"></div>
 			</div>
 			<div class="calculation" state="hidden">BS=BS+<input class="tooltip" type="text" name="bsOffValue"	value="0"></div>
-			<div style="display: table-cell;" expanding="True">
+			<div style="display: inline-block;" expanding="True">
 			<div class="attribute"><a>BM</a></div>
 			<div class="attribute"><input class="base" type="text" name="bmValue" value="10"></div>
 			<div class="attribute"><input class="base" type="text" name="bmCost" value="0"></div>
@@ -179,16 +206,22 @@
 			<div class="calculation" state="hidden">BM=BM+<input class="tooltip" type="text" name="bmOffValue"	value="0"></div>
 			</div>
 			<div>
+			<div style="display:inline-block;">
 			<div class="attribute"><a>THR</a></div>
 			<div class="attribute"><input class="base" type="text" name="thrValue" value="-"></div>
 			<div class="attribute"></div>
+			</div>
+			<div style="display:inline-block;">
 			<div class="attribute"><a>SWI</a></div>
 			<div class="attribute"><input class="base" type="text" name="swiValue" value="-"></div>
 			<div class="attribute"></div>
 			</div>
+			</div>
 			<div>
+			<div style="display:inline-block;">
 			<div class="attribute"><a>BL</a></div>
 			<div class="attribute"><input class="base" type="text" name="blValue" value="-"></div>
+			</div>
 			</div>
 		</div>
 		<hr>
@@ -205,9 +238,8 @@
 		<div>
 			<table>
 			<tr><td>Languages</td><td align="c">Spoken</td><td align="c">Written</td><td></td></tr>
-			<tr index="0"><td ul="T"><input index="0" object="lan" name="Name" value="-"></td><td ul="T"><select index="0" object="lan" name="Spoken" value="Native" align="c"><option>Native</option><option>Accented</option><option>Broken</option><option>None</option></select></td><td ul="T"><select index="0" object="lan" name="Wri" value="Native" align="c"><option>Native</option><option>Accented</option><option>Broken</option><option>None</option></select></td><td ul="T"><input index="0" object="lan" name="Cost" value="" align="c"></td><td>
-				<!-- <button type="button" onclick="delRowTable($(this))">-</button> -->
-				<button type="button" onclick="lanTable($(this))">+</button></td></tr>
+			<tr index="0" object="lan"><td ul="T"><input index="0" object="lan" name="Name" value=""></td><td ul="T"><select index="0" object="lan" name="Spoken" value="Native" align="c"><option>Native</option><option>Accented</option><option>Broken</option><option>None</option></select></td><td ul="T"><select index="0" object="lan" name="Wri" value="Native" align="c"><option>Native</option><option>Accented</option><option>Broken</option><option>None</option></select></td><td ul="T"><input index="0" object="lan" name="Cost" value="" align="c"></td><td>
+				<button type="button" onclick="delRowTable($(this))">-</button><button type="button" onclick="lanTable($(this))">+</button></td></tr>
 			</table>
 		</div>
 		<hr>
@@ -215,29 +247,53 @@
 		<a>TL: </a><input name="tlValue"><br>
 		<a>Cultural Familiarities</a>
 			<table>
-			<tr index="0"><td ul="T"><input index="0" object="clFam" name="Name" value="" placeholder="Native Culture Name"></td><td ul="T"><input index="0" object="clFam" name="Cost" value="" align="c"></td><td>
-				<!-- <button type="button" onclick="">-</button> -->
-				<button type="button" onclick="culTable($(this))">+</button></td></tr>
+			<tr index="0" object="clFam"><td ul="T"><input index="0" object="clFam" name="Name" value="" placeholder="Native Culture Name"></td><td ul="T"><input index="0" object="clFam" name="Cost" value="" align="c"></td><td>
+				<button type="button" onclick="delRowTable($(this))">-</button><button type="button" onclick="culTable($(this))">+</button></td></tr>
 			</table>
+		</div>
 		</div>
 <!-- <button type="button" onclick="aFunction()">Click Me!</button> 	 -->
 </form>
 <script src="javascripts/jquery.qtip.js"></script>
 </body>
-<script>
-//JSON Convert
+<script type="text/javascript">
+		var importList = ['strChart','hello'];
+		var lCount = importList.length;
+		$.each(importList,function(y,z){
+			$.ajax({
+			  url:"data/"+z+".json",
+			  beforeSend: function(xhr){
+			    if (xhr.overrideMimeType){xhr.overrideMimeType("application/json");}},
+			  type:"GET",
+			  dataType:"json",
+			  cache:false,
+			}).done(function(data){
+				console.log("loaded: "+z+".json");
+				window[z] = data;
+			})
+		.done(function(){
+				console.log("start add");
+				$('input,select,textarea').each(addAttr);
+				console.log("finished adding attributes");
+			}).done(calculateJson).done(function(){
+				console.log("start return");
+				$.each(a, returnAttr);
+				console.log("finished return attributes");
+			});
+		});
+
 
 var a = {};
 $(document).ready(function(){
 
-$('input,select').each(addAttr);
-// $('input').change(addAttr);
-$.each(a, returnAttr);
+// $('input,select,textarea').each(addAttr);
+// // $('input').change(addAttr);
+// $.each(a, returnAttr);
 });
-$(document).on('change','input,select', addAttr);
+$(document).on('change','input,select,textarea', addAttr).on('change','input,select,textarea',calculateJson);
 
 function checkAttr(){
-	$('input,select').each(addAttr);
+	$('input,select,textarea').each(addAttr);
 }
 
 function returnAttr(k, v){
@@ -268,7 +324,7 @@ function addAttr(){
 var inputName = $(this).attr('name');
 var objectName = $(this).attr('object');
 var inputValue = this.value;
-
+// console.log(inputValue);
 if(objectName == undefined) {
 	a[inputName] = inputValue;	
 } else {
@@ -282,7 +338,7 @@ if(objectName == undefined) {
 	a[objectName][index][inputName] = inputValue;
 }
 
-calculateJson();
+// calculateJson();
 // console.log("change: "+ inputName +" | "+ inputValue);
 // console.log(a);
 }
@@ -300,6 +356,7 @@ $('[expanding="True"]').each(function() {
 $('[state="hidden"]').hide();
 
 function calculateJson() {
+	// console.log("CALCULATE!")
 	a.stCost =		((a.stValue)-10)*10;
 	a.dxCost =		((a.dxValue)-10)*20;
 	a.iqCost =		((a.iqValue)-10)*20;
@@ -369,7 +426,18 @@ function calculateJson() {
 		}
 		k.Cost = clCost;
 	});
-
+	
+	var costsTable = {};
+	var costsIndex = 0;
+	var keyNames = Object.keys(a);
+	$.each(keyNames, function(){
+		var keyName = String(this);
+		if (keyName.indexOf("Cost") > -1){
+			costsTable[costsIndex] = a[keyName];
+			costsIndex += 1;
+			console.log(costsTable);
+			}
+	});
 	$.each(a, returnAttr);
 }
 
@@ -379,44 +447,68 @@ function lanTable(buttonObject){
 	// console.log(parent);
 	var parentIndex= parseInt($(parent).attr('index'))+parseInt(1);
 	// console.log(parentIndex);
-	$(parent).after('<tr index="'+parentIndex+'"><td ul="T"><input index="'+parentIndex+'" object="lan" name="Name" value="" placeholder="Language Name"></td><td ul="T"><select index="'+parentIndex+'" object="lan" name="Spoken" value="Native" align="c"><option>Native</option><option>Accented</option><option>Broken</option><option>None</option></select></td><td ul="T"><select index="'+parentIndex+'" object="lan" name="Wri" value="Native" align="c"><option>Native</option><option>Accented</option><option>Broken</option><option>None</option></select></td><td ul="T"><input index="'+parentIndex+'" object="lan" name="Cost" value="-" align="c"></td><td>'+
-		// '<button type="button" onclick="delRowTable($(this))">-</button>'+
+	$(parent).after('<tr index="'+parentIndex+'" object="lan"><td ul="T"><input index="'+parentIndex+'" object="lan" name="Name" value="" placeholder="Language Name"></td><td ul="T"><select index="'+parentIndex+'" object="lan" name="Spoken" value="Native" align="c"><option>Native</option><option>Accented</option><option>Broken</option><option>None</option></select></td><td ul="T"><select index="'+parentIndex+'" object="lan" name="Wri" value="Native" align="c"><option>Native</option><option>Accented</option><option>Broken</option><option>None</option></select></td><td ul="T"><input index="'+parentIndex+'" object="lan" name="Cost" value="-" align="c"></td><td>'+
+		'<button type="button" onclick="delRowTable($(this))">-</button>'+
 		'<button type="button" onclick="lanTable($(this))">+</button></td></tr>');
-	$(buttonObject).hide();
-	checkAttr()
+	// $(buttonObject).hide();
+	reindexHtml(parent);
+	checkAttr();
+	calculateJson();
 }
 function culTable(buttonObject){
 	var parent = $(buttonObject).parents('[index]');
 	// console.log(parent);
 	var parentIndex= parseInt($(parent).attr('index'))+parseInt(1);
 	// console.log(parentIndex);
-	$(parent).after('<tr index="'+parentIndex+'"><td ul="T"><input index="'+parentIndex+'" object="clFam" name="Name" value="" placeholder="Culture Name"></td><td ul="T"><input index="'+parentIndex+'" object="clFam" name="Cost" value="0" align="c"></td><td>'+
-		// '<button type="button" onclick="delRowTable($(this))">-</button>'+
-		'<button type="button" onclick="culTable($(this))">+</button></td></tr>');
-	$(buttonObject).hide();
-	checkAttr()
+	$(parent).after('<tr index="'+parentIndex+'" object="clFam"><td ul="T"><input index="'+parentIndex+'" object="clFam" name="Name" value="" placeholder="Culture Name"></td><td ul="T"><input index="'+parentIndex+'" object="clFam" name="Cost" value="0" align="c"></td><td>'+
+		'<button type="button" onclick="delRowTable($(this))">-</button><button type="button" onclick="culTable($(this))">+</button></td></tr>');
+	// $(buttonObject).hide();
+	reindexHtml(parent);
+	checkAttr();
+	calculateJson();
+}
+
+function reindexHtml (indItem){
+	var parParent = $(indItem).parent();
+	var typeObjec = $(indItem).get(0).tagName;
+	var reIndexIt = $(parParent).children(typeObjec+"[index]");
+	// console.log(reIndexIt);
+	var newIndex = 0;
+	$.each(reIndexIt,function(){
+		$(this).attr('index', newIndex);
+		var childrenFam = $(this).find('input,select,textarea');
+		$.each(childrenFam, function(){
+		$(this).attr('index', newIndex);
+		});
+		newIndex += 1;
+	});
 }
 
 function delRowTable(buttonObject){
 	var parent = $(buttonObject).parents('[index]');
 	var parentType = $(parent).get(0).tagName;
 	var granDad = $(parent).parent();
+	var objectArray = $(parent).attr('object');
+	var oArrayIndex = parseInt($(parent).attr('index'));
+	a[objectArray].splice(oArrayIndex, 1);
+
 	$(parent).remove();
+
 	var siblings = $(granDad).children(parentType+"[index]")
 	var siblingCount = $(siblings).length;
 	var newIndex = 0;
 	$.each(siblings, function(){
 		$(this).attr('index', newIndex);
-		var childrenFam = $(this).find('input,select');
+		var childrenFam = $(this).find('input,select,textarea');
 		$.each(childrenFam, function(){
 		$(this).attr('index', newIndex);
 		var objectName = $(this).attr('object');
-		$.removeData(a[objectName]);
 		});
 		$.each(childrenFam,addAttr);
-		console.log($(this).attr('index'));
 		newIndex += 1;
 	});
+	checkAttr();
+	calculateJson();
 }
 // function parseValue(o) {
 // 	c = "[name='"+o.attr("target")+"']"
@@ -427,9 +519,16 @@ function delRowTable(buttonObject){
 // 	targetObject.val(valueChange);
 
 // }
-// console.log(JSON.stringify(a));
 function roundToOne(num) {    
     return +(Math.round(num + "e+1")  + "e-1");
 }
+// console.log(a);
+$('a.button').click(function(){
+	console.log(JSON.stringify(a));
+})
+</script>
+<script src="javascripts/autosize.js"></script>
+<script type="text/javascript">
+	autosize($('textarea'));
 </script>
 </html>
