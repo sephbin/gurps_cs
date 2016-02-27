@@ -123,22 +123,24 @@
 
 <form id="frm1">
 		<div class="sidebar">
-		<a class="button">Hello</a>
+		<a class="button">Hello</a><br>
+		<a class="post">POST</a>
 		</div>
 		<div class="content">
 		<div>
 		<table>
-		<tr align="right"><td><a>Name&nbsp;</a></td><td ul="T"><input class="identity" name="charName" placeholder="Character Name"></input></td><td><a>Player&nbsp;</a><td ul="T"><input class="identity" name="playerName" placeholder="Player Name"></input></td></tr>
-		<tr align="right"><td><a>World&nbsp;</a></td><td ul="T"><input class="identity" name="worldName" placeholder="World Name"></input></td><td><a>Campaign&nbsp;</a></td><td ul="T"><input class="identity" name="campaignName" placeholder="Campaign Name"></input></td></tr>
-		<tr align="right"><td><a>Height&nbsp;</a></td><td ul="T"><input class="identity" name="heightValue" placeholder="? cm"></input></td><td><a>Weight&nbsp;</a><td ul="T"><input class="identity" name="weightValue" placeholder="? kg"></input></td></tr>
-		<tr align="right"><td><a>Size Modifier&nbsp;</a><td ul="T"><input class="identity" name="smValue" value="0"></input></td><td><a>Age&nbsp;</a><td ul="T"><input class="identity" name="ageValue" placeholder="??"></input></td></tr>
-		<tr align="right"><td><a>Apearance&nbsp;</a><td colspan="3" ul="T"><textarea class="identity" rows="1" name="appText" spellcheck="false"></textarea></td></tr>
-		<tr align="right"><td><a>Point Total&nbsp;</a><td ul="T" name="ptValue"><input class="identity"></input></td>
-		<td><a>Unspent Points&nbsp;</a><td ul="T"><input class="identity" name="uptValue"></input></td></tr>
+		<tr align="right"><td><a>Name</a></td><td ul="T"><input class="identity" name="charName" placeholder="Character Name"></input></td><td><a>Player</a><td ul="T"><input class="identity" name="playerName" placeholder="Player Name"></input></td></tr>
+		<tr align="right"><td><a>World</a></td><td ul="T"><input class="identity" name="worldName" placeholder="World Name"></input></td><td><a>Campaign</a></td><td ul="T"><input class="identity" name="campaignName" placeholder="Campaign Name"></input></td></tr>
+		<tr align="right"><td><a>Height</a></td><td ul="T"><input class="identity" name="heightValue" placeholder="? cm"></input></td><td><a>Weight</a><td ul="T"><input class="identity" name="weightValue" placeholder="? kg"></input></td></tr>
+		<tr align="right"><td><a>SM</a><td ul="T"><input class="identity" name="smValue" value="0"></input></td><td><a>Age</a><td ul="T"><input class="identity" name="ageValue" placeholder="??"></input></td></tr>
+		<tr align="right"><td><a>Point Limit</a></td><td ul="T"><input class="identity" name="ptLimit" placeholder="Point Limit" value="0"></input></td><td><a></a></td><td></td></tr>
+		<tr align="right"><td><a>Point Total</a><td ul="T" ><input name="ptValue"class="identity"></input></td>
+		<td><a>Unspent Points</a><td ul="T"><input class="identity" name="uptValue"></input></td></tr>
+		<tr align="right"><td><a>Apearance</a><td colspan="3" ul="T"><textarea class="identity" rows="1" name="appText" spellcheck="false"></textarea></td></tr>
 		</table>
 		</div>
 		<hr>
-		<div>
+		<div align="center">
 			<div>
 			<div style="display:inline-block;">
 			<div class="attribute"><a>ST</a></div>
@@ -244,9 +246,11 @@
 		</div>
 		<hr>
 		<div>
-		<a>TL: </a><input name="tlValue"><br>
-		<a>Cultural Familiarities</a>
-			<table>
+		<table>
+		<tr><td><a>TL</a></td><td ul="T"><input name="tlValue" style="text-align:center"></td></tr>
+		</table>
+		<table>
+		<tr><td><a>Cultural Familiarities</a></td></tr>
 			<tr index="0" object="clFam"><td ul="T"><input index="0" object="clFam" name="Name" value="" placeholder="Native Culture Name"></td><td ul="T"><input index="0" object="clFam" name="Cost" value="" align="c"></td><td>
 				<button type="button" onclick="delRowTable($(this))">-</button><button type="button" onclick="culTable($(this))">+</button></td></tr>
 			</table>
@@ -357,7 +361,7 @@ $('[state="hidden"]').hide();
 
 function calculateJson() {
 	// console.log("CALCULATE!")
-	a.stCost =		((a.stValue)-10)*10;
+	a.stCost =		Math.ceil(((a.stValue)-10)*10*(1-(a.smValue*.1)));
 	a.dxCost =		((a.dxValue)-10)*20;
 	a.iqCost =		((a.iqValue)-10)*20;
 	a.htCost =		((a.htValue)-10)*10;
@@ -427,7 +431,10 @@ function calculateJson() {
 		k.Cost = clCost;
 	});
 	
-	var costsTable = {};
+	var costsTable = [];
+	
+	var aJq = jsonQ(a),
+	jqCosts = aJq.find('Cost');
 	var costsIndex = 0;
 	var keyNames = Object.keys(a);
 	$.each(keyNames, function(){
@@ -435,9 +442,18 @@ function calculateJson() {
 		if (keyName.indexOf("Cost") > -1){
 			costsTable[costsIndex] = a[keyName];
 			costsIndex += 1;
-			console.log(costsTable);
 			}
 	});
+	var allCosts = costsTable.concat(jqCosts.value());
+	// console.log(allCosts);
+	var costTotal = 0;
+	$.each(allCosts,function(){
+		costTotal += this;
+	});
+	// console.log(costTotal);
+	a.ptValue = costTotal;
+	a.uptValue = a.ptLimit-costTotal;
+
 	$.each(a, returnAttr);
 }
 
@@ -525,6 +541,10 @@ function roundToOne(num) {
 // console.log(a);
 $('a.button').click(function(){
 	console.log(JSON.stringify(a));
+})
+$('a.post').click(function(){
+	// console.log(JSON.stringify(a));
+	$.post( "data/chars.json", { name: "John", time: "2pm" }).done(console.log("done"));
 })
 </script>
 <script src="javascripts/autosize.js"></script>
