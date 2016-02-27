@@ -2,6 +2,7 @@
 <meta charset="UTF-8"> 
 <html>
 <script src="javascripts/jquery-2.2.0.min.js"></script>
+<script src="javascripts/jsonQ.js"></script>
 <head>
 <link type="text/css" rel="stylesheet" href="stylesheets/jquery.qtip.css" />
 <style type="text/css">
@@ -38,6 +39,7 @@
 	}
 	input.identity{
 		text-align: center;
+		width: 100px;
 	}
 	input.base{
 		width:50px;
@@ -121,12 +123,13 @@
 
 <form id="frm1">
 		<div class="sidebar">
-		Hello
+		<a class="button">Hello</a>
 		</div>
 		<div class="content">
 		<div>
 		<table>
 		<tr align="right"><td><a>Name&nbsp;</a></td><td ul="T"><input class="identity" name="charName" placeholder="Character Name"></input></td><td><a>Player&nbsp;</a><td ul="T"><input class="identity" name="playerName" placeholder="Player Name"></input></td></tr>
+		<tr align="right"><td><a>World&nbsp;</a></td><td ul="T"><input class="identity" name="worldName" placeholder="World Name"></input></td><td><a>Campaign&nbsp;</a></td><td ul="T"><input class="identity" name="campaignName" placeholder="Campaign Name"></input></td></tr>
 		<tr align="right"><td><a>Height&nbsp;</a></td><td ul="T"><input class="identity" name="heightValue" placeholder="? cm"></input></td><td><a>Weight&nbsp;</a><td ul="T"><input class="identity" name="weightValue" placeholder="? kg"></input></td></tr>
 		<tr align="right"><td><a>Size Modifier&nbsp;</a><td ul="T"><input class="identity" name="smValue" value="0"></input></td><td><a>Age&nbsp;</a><td ul="T"><input class="identity" name="ageValue" placeholder="??"></input></td></tr>
 		<tr align="right"><td><a>Apearance&nbsp;</a><td colspan="3" ul="T"><textarea class="identity" rows="1" name="appText" spellcheck="false"></textarea></td></tr>
@@ -423,8 +426,19 @@ function calculateJson() {
 		}
 		k.Cost = clCost;
 	});
+	
+	var costsTable = {};
+	var costsIndex = 0;
+	var keyNames = Object.keys(a);
+	$.each(keyNames, function(){
+		var keyName = String(this);
+		if (keyName.indexOf("Cost") > -1){
+			costsTable[costsIndex] = a[keyName];
+			costsIndex += 1;
+			console.log(costsTable);
+			}
 
-	$.each(a, returnAttr);
+	});
 }
 
 
@@ -458,7 +472,7 @@ function reindexHtml (indItem){
 	var parParent = $(indItem).parent();
 	var typeObjec = $(indItem).get(0).tagName;
 	var reIndexIt = $(parParent).children(typeObjec+"[index]");
-	console.log(reIndexIt);
+	// console.log(reIndexIt);
 	var newIndex = 0;
 	$.each(reIndexIt,function(){
 		$(this).attr('index', newIndex);
@@ -509,6 +523,9 @@ function roundToOne(num) {
     return +(Math.round(num + "e+1")  + "e-1");
 }
 // console.log(a);
+$('a.button').click(function(){
+	console.log(JSON.stringify(a));
+})
 </script>
 <script src="javascripts/autosize.js"></script>
 <script type="text/javascript">
