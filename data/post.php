@@ -1,6 +1,10 @@
 <?php
- $updatedData = $_POST['newData'];
-// please validate the data you are expecting for security
-file_put_contents('chars.json', $updatedData);
-//return the url to the saved file
+if(!empty($_POST['data'])){
+$data = $_POST['data'];
+$fname = "chars.txt";//generates random name
+
+$file = fopen("upload/" .$fname, 'w');//creates new file
+fwrite($file, $data);
+fclose($file);
+}
 ?>

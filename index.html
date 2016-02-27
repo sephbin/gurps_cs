@@ -546,7 +546,12 @@ $('a.post').click(function(){
 chars.chars[0] = a;
 newData = JSON.stringify(chars);
 console.log(chars);
-$.get("data/post.php");
+
+var data = a;
+console.log(data);
+var xhr = (window.XMLHttpRequest) ? new XMLHttpRequest() : new activeXObject("Microsoft.XMLHTTP");
+xhr.open( 'post', 'data/post.php', true );
+xhr.send(data);
 })
 </script>
 <script src="javascripts/autosize.js"></script>
