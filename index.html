@@ -261,7 +261,7 @@
 <script src="javascripts/jquery.qtip.js"></script>
 </body>
 <script type="text/javascript">
-		var importList = ['strChart','hello'];
+		var importList = ['strChart','chars'];
 		var lCount = importList.length;
 		$.each(importList,function(y,z){
 			$.ajax({
@@ -543,8 +543,10 @@ $('a.button').click(function(){
 	console.log(JSON.stringify(a));
 })
 $('a.post').click(function(){
-	// console.log(JSON.stringify(a));
-	$.post( "data/chars.json", { name: "John", time: "2pm" }).done(console.log("done"));
+chars.chars[0] = a;
+newData = JSON.stringify(chars);
+console.log(chars);
+$.get("data/post.php");
 })
 </script>
 <script src="javascripts/autosize.js"></script>
