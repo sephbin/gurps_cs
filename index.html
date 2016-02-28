@@ -61,6 +61,10 @@
 		text-align: center;
 		font-weight: bold;
 	}
+	.rMods {
+		max-width:100%;
+	}
+
 	[align="c"]{
 		text-align: center;
 	}
@@ -255,6 +259,25 @@
 				<button type="button" onclick="delRowTable($(this))">-</button><button type="button" onclick="culTable($(this))">+</button></td></tr>
 			</table>
 		</div>
+		<hr>
+		<div>
+		<a>Reaction Modifiers</a>
+		<table>
+		<tr><td><a>Appearance</a></td><td ul="T"><input class="rMods" name="appValue" style="text-align:center" placeholder="Normal"></td><td ul="T"><input class="rMods" name="appCost" style="text-align:center" placeholder="0"></td></tr>
+		<tr><td><a>Status</a></td><td ul="T"><input class="rMods" name="statValue" style="text-align:center" placeholder="Normal"></td><td ul="T"><input class="rMods" name="statCost" style="text-align:center" placeholder="0"></td></tr>
+		</table>
+		<a>Reputation</a>
+		<table>
+		<tr index="0" object="rep">
+			<td ul="T"><input class="rMods" index="0" object="rep" name="Name" value="" placeholder="???"></td>
+			<td ul="T"><select class="rMods" index="0" object="rep" name="Value" value="+0" align="c"><option>+4</option><option>+3</option><option>+2</option><option>+1</option><option>+0</option><option>-1</option>><option>-2</option>><option>-3</option>><option>-4</option></select></td>
+			<td ul="T"><a>(</a><select class="rMods" index="0" object="rep" name="Affected" value="Almost Everyone" align="c"><option>Almost Everyone</option><option>Excluding One Large Class</option><option>Large Class</option><option>Small Class</option></select><a>,</a></td>
+			<td ul="T"><select class="rMods" index="0" object="rep" name="Frequency" value="<18" align="c"><option><18</option><option><10</option><option><7</option></select><a>)</a></td>
+			<td ul="T"><input class="rMods" index="0" object="rep" name="Cost" value="" align="c" style="width:30px"></td>
+			<td><button type="button" onclick="delRowTable($(this))">-</button><button type="button" onclick="repTable($(this))">+</button></td>
+		</tr>
+		</table>
+		</div>
 		</div>
 <!-- <button type="button" onclick="aFunction()">Click Me!</button> 	 -->
 </form>
@@ -371,7 +394,7 @@ function calculateJson() {
 	a.fpValue =		parseInt(a.fpOffValue)+parseInt(a.htValue);
 	a.bsValue =		parseFloat(a.bsOffValue)+((parseInt(a.dxValue)+parseInt(a.htValue))/4);
 	a.bmValue =		parseFloat(a.bmOffValue)+Math.floor(((parseInt(a.dxValue)+parseInt(a.htValue))/4));
-	a.blValue =		roundToOne(((a.stValue*a.stValue)/5)*0.454);
+	a.blValue =		roundToOne(((a.stValue*a.stValue)/5)*0.453592);
 	a.hpCost =		a.hpOffValue*2;
 	a.perCost =		a.perOffValue*5;
 	a.willCost =	a.willOffValue*5;
@@ -483,6 +506,30 @@ function culTable(buttonObject){
 	checkAttr();
 	calculateJson();
 }
+function repTable(buttonObject){
+	var parent = $(buttonObject).parents('[index]');
+	// console.log(parent);
+	var parentIndex= parseInt($(parent).attr('index'))+parseInt(1);
+	// console.log(parentIndex);
+	$(parent).after('<tr index="'
+		+parentIndex+
+		'" object="rep"><td ul="T"><input class="rMods" index="'
+		+parentIndex+
+		'" object="rep" name="Name" value="" placeholder="???"></td><td ul="T"><select class="rMods" index="'
+		+parentIndex+
+		'" object="rep" name="Value" value="+0" align="c"><option>+4</option><option>+3</option><option>+2</option><option>+1</option><option>+0</option><option>-1</option>><option>-2</option>><option>-3</option>><option>-4</option></select></td><td ul="T"><a>(</a><select class="rMods" index="'
+		+parentIndex+
+		'" object="rep" name="Affected" value="Almost Everyone" align="c"><option>Almost Everyone</option><option>Excluding One Large Class</option><option>Large Class</option><option>Small Class</option></select><a>,</a></td><td ul="T"><select class="rMods" index="'
+		+parentIndex+
+		'" object="rep" name="Frequency" value="<18" align="c"><option><18</option><option><10</option><option><7</option></select><a>)</a></td><td ul="T"><input class="rMods" index="'
+		+parentIndex+
+		'" object="rep" name="Cost" value="" align="c" style="width:30px"></td><td><button type="button" onclick="delRowTable($(this))">-</button><button type="button" onclick="repTable($(this))">+</button></td></tr>'
+		);
+	// $(buttonObject).hide();
+	reindexHtml(parent);
+	checkAttr();
+	calculateJson();
+}
 
 function reindexHtml (indItem){
 	var parParent = $(indItem).parent();
@@ -539,9 +586,9 @@ function roundToOne(num) {
     return +(Math.round(num + "e+1")  + "e-1");
 }
 // console.log(a);
-// $('a.button').click(function(){
-	// console.log(JSON.stringify(a));
-// })
+$('a.button').click(function(){
+	console.log(JSON.stringify(a));
+})
 $('a.post').click(function(){
 chars.chars[0] = a;
 var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(chars));
