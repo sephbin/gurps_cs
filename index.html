@@ -268,15 +268,8 @@
 		</table>
 		<a>Reputation</a>
 		<table>
-		<tr index="0" object="rep">
-			<td ul="T"><input class="rMods" index="0" object="rep" name="Name" value="" placeholder="???"></td>
-			<td ul="T"><select class="rMods" index="0" object="rep" name="Value" value="+0" align="c"><option>+4</option><option>+3</option><option>+2</option><option>+1</option><option>+0</option><option>-1</option>><option>-2</option>><option>-3</option>><option>-4</option></select></td>
-			<td ul="T"><a>(</a><select class="rMods" index="0" object="rep" name="Affected" value="Almost Everyone" align="c"><option>Almost Everyone</option><option>Excluding One Large Class</option><option>Large Class</option><option>Small Class</option></select><a>,</a></td>
-			<td ul="T"><select class="rMods" index="0" object="rep" name="Frequency" value="<18" align="c"><option><18</option><option><10</option><option><7</option></select><a>)</a></td>
-			<td ul="T"><input class="rMods" index="0" object="rep" name="Cost" value="" align="c" style="width:30px"></td>
-			<td><button type="button" onclick="delRowTable($(this))">-</button><button type="button" onclick="repTable($(this))">+</button></td>
-		</tr>
-		</table>
+		<div index="0" object="rep" expanding="True"><input class="rMods" index="0" object="rep" name="Display" value="" placeholder="???"><input class="rMods" index="0" object="rep" name="Cost" value="" align="c" style="width:30px"><button type="button" onclick="delRowTable($(this))">-</button><button type="button" onclick="repTable($(this))">+</button></div>
+			<div class="calculation" state="hidden"><input class="rMods" index="0" object="rep" name="Name" value="" placeholder="???"><select class="rMods" index="0" object="rep" name="Value" value="+0" align="c"><option>+4</option><option>+3</option><option>+2</option><option>+1</option><option>+0</option><option>-1</option>><option>-2</option>><option>-3</option>><option>-4</option></select><br><select class="rMods" index="0" object="rep" name="Affected" value="Almost Everyone" align="c"><option>Almost Everyone</option><option>Excluding One Large Class</option><option>Large Class</option><option>Small Class</option></select><select class="rMods" index="0" object="rep" name="Frequency" value="<18" align="c"><option><18</option><option><10</option><option><7</option></select></div>
 		</div>
 		</div>
 <!-- <button type="button" onclick="aFunction()">Click Me!</button> 	 -->
@@ -377,6 +370,7 @@ $('[expanding="True"]').each(function() {
         content: {text: $(this).next('div.calculation')},
         show: {event: 'mouseover click', solo: true,effect: function() {$(this).fadeTo(500, 1); }},
         hide: {event: 'click unfocus',effect: function() {$(this).fadeTo(500, 0); }},
+        style: { classes: 'qtip-light' },
         position: {my: 'left center', at: 'center right',viewport: $(window)}});
 });
 
