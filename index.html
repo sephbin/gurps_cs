@@ -3,6 +3,7 @@
 <html>
 <script src="javascripts/jquery-2.2.0.min.js"></script>
 <script src="javascripts/jsonQ.js"></script>
+<script src="javascripts/decimal.js"></script>
 <head>
 <link type="text/css" rel="stylesheet" href="stylesheets/jquery.qtip.css" />
 <style type="text/css">
@@ -61,10 +62,9 @@
 		text-align: center;
 		font-weight: bold;
 	}
-	.rMods {
-		max-width:100%;
+	[align="l"]{
+		text-align: left;
 	}
-
 	[align="c"]{
 		text-align: center;
 	}
@@ -121,6 +121,11 @@
 		font-family: 'Josefin Sans', Calibri, sans-serif;
 
 	}
+	.rMods {
+		max-width:100%;
+		text-align: left;
+	}
+
 </style>
 </head>
 <body>
@@ -267,9 +272,15 @@
 		<tr><td><a>Status</a></td><td ul="T"><input class="rMods" name="statValue" style="text-align:center" placeholder="Normal"></td><td ul="T"><input class="rMods" name="statCost" style="text-align:center" placeholder="0"></td></tr>
 		</table>
 		<a>Reputation</a>
-		<table>
-		<div index="0" object="rep" expanding="True"><input class="rMods" index="0" object="rep" name="Display" value="" placeholder="???"><input class="rMods" index="0" object="rep" name="Cost" value="" align="c" style="width:30px"><button type="button" onclick="delRowTable($(this))">-</button><button type="button" onclick="repTable($(this))">+</button></div>
-			<div class="calculation" state="hidden"><input class="rMods" index="0" object="rep" name="Name" value="" placeholder="???"><select class="rMods" index="0" object="rep" name="Value" value="+0" align="c"><option>+4</option><option>+3</option><option>+2</option><option>+1</option><option>+0</option><option>-1</option>><option>-2</option>><option>-3</option>><option>-4</option></select><br><select class="rMods" index="0" object="rep" name="Affected" value="Almost Everyone" align="c"><option>Almost Everyone</option><option>Excluding One Large Class</option><option>Large Class</option><option>Small Class</option></select><select class="rMods" index="0" object="rep" name="Frequency" value="<18" align="c"><option><18</option><option><10</option><option><7</option></select></div>
+		<div index="0" object="rep" expanding="True"><input style="width:200px" class="rMods" index="0" object="rep" name="Display" value="" placeholder="Reputation"><input class="rMods" index="0" object="rep" name="Cost" value="" align="c" style="width:30px"><button type="button" onclick="delRowTable($(this))">-</button><button type="button" onclick="repTable($(this))">+</button></div>
+			<div class="calculation" state="hidden" index="0"><table><tr><td align="l">Reputation Type</td><td>Mod.</td></tr>
+			<tr><td ul="T"><input class="rMods" index="0" object="rep" name="Name" value="" placeholder="Loved/Hated"></td><td ul="T"><select class="rMods" index="0" object="rep" name="Value" align="c"><option>+4</option><option>+3</option><option>+2</option><option>+1</option><option selected="selected">+0</option><option>-1</option>><option>-2</option>><option>-3</option>><option>-4</option></select></td></tr>
+			<tr><td align="l">Affected Group</td><td>Freq.</td></tr>
+			<tr><td ul="T">
+			<input class="rMods" index="0" object="rep" name="DAffected" value="" placeholder="Asbjorn/All Bakers">
+			</td><td ul="T"><select class="rMods" index="0" object="rep" name="Frequency" value="<18" align="c"><option><18</option><option><10</option><option><7</option></select></td></tr><tr><td ul="T">
+			<select class="rMods" index="0" object="rep" name="Affected" value="Almost Everyone" align="c"><option>Almost Everyone</option><option>Excluding One Large Class</option><option>Large Class</option><option>Small Class</option></select>
+			</td><td ul="T"></td></tr></table></div>
 		</div>
 		</div>
 <!-- <button type="button" onclick="aFunction()">Click Me!</button> 	 -->
@@ -448,6 +459,27 @@ function calculateJson() {
 		k.Cost = clCost;
 	});
 	
+	$.each(a.rep, function(i,k){
+		var repReplace = {"+4":20,"+3":15, "+2":10, "+1":5, "+0":-0, "-1":-5, "-2":-10, "-3":-15, "-4":-20};
+		var repReplace2 = {"Almost Everyone":1,"Excluding One Large Class":0.67,"Large Class":0.5,"Small Class":0.33};
+		var repReplace3 = {"<18":1,"<10":0.5,"<7":0.33};
+			console.log(k.Value);
+			if(k.Name != undefined&&k.Name != ""){
+			var repV = k.Value;
+			var repVCost = repV.replace(/\+4|\+3|\+2|\+1|\+0|\-1|\-2|\-3|\-4/gi, function(matched){return repReplace[matched];});
+			var repVMod1 = (k.Affected).replace(/Almost Everyone|Excluding One Large Class|Large Class|Small Class/gi, function(matched){return repReplace2[matched];});
+			var repVMod2 = (k.Frequency).replace(/<18|<10|<7/gi, function(matched){return repReplace3[matched];});
+			k.Display = k.Name +" "+k.Value+" ("+k.DAffected +", "+ k.Frequency+")";
+		}else{
+			var repVCost = 0;
+			var repVMod1 = 0;
+			var repVMod2 = 0;
+			k.Display = "";
+		}
+		Decimal.config({ rounding: 1 })
+		k.Cost = Decimal(parseInt(repVCost)*repVMod1*repVMod2).round();
+	});
+
 	var costsTable = [];
 	
 	var aJq = jsonQ(a),
@@ -461,6 +493,8 @@ function calculateJson() {
 			costsIndex += 1;
 			}
 	});
+	console.log(costsTable);
+	console.log(jqCosts.value())
 	var allCosts = costsTable.concat(jqCosts.value());
 	// console.log(allCosts);
 	var costTotal = 0;
@@ -581,7 +615,8 @@ function roundToOne(num) {
 }
 // console.log(a);
 $('a.button').click(function(){
-	console.log(JSON.stringify(a));
+	// console.log(JSON.stringify(a));
+	console.log(a);
 })
 $('a.post').click(function(){
 chars.chars[0] = a;
